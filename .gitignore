@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# my_files
+/Readme_local.md
+Readme_local.md
+/Readme_deploy.md
+Readme_deploy.md
