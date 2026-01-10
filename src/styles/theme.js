@@ -6,6 +6,12 @@ const theme = createTheme({
             main: "#1976d2",
         },
     },
+    typography: {
+        fontFamily: "Arial, sans-serif",
+        h5: {
+            fontFamily: "Girassol",
+        },
+    },
 });
 
 export default theme;
