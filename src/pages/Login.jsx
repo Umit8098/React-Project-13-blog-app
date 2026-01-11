@@ -1,7 +1,20 @@
+import { Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../features/auth/authSlice";
 
 const Login = () => {
+    
+    const dispatch = useDispatch();
+
     return (
-        <h1>Login</h1>
+        <Button 
+            variant="contained"
+            onClick={()=>{
+                dispatch(loginSuccess({email: "test@test.com"}))
+            }}
+        >
+            Mock Login
+        </Button>
     )
 };
 

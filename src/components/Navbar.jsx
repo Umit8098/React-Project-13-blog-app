@@ -10,11 +10,15 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import logo from "../assets/design.svg";
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const isAuthenticated = false; // şimdilik mock
+//   const isAuthenticated = false; // şimdilik mock
+  const { isAuthenticated } = useSelector((state)=>state.auth);
+  const dispatch = useDispatch();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,6 +27,37 @@ export default function Navbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+
+  const menuItems = isAuthenticated 
+    ? [
+        <MenuItem 
+            key="profile" 
+            onClick={handleClose}
+        >Profile</MenuItem>,
+        <MenuItem 
+            key="account" 
+            onClick={handleClose}
+        >My account</MenuItem>,
+        <MenuItem 
+            key="logout" 
+            onClick={()=>{
+                dispatch(logout());
+                handleClose();
+        }}>Logout</MenuItem>
+    ]:[
+        <MenuItem 
+            key="login" 
+            component={Link} to="/login" 
+            onClick={handleClose}
+        >Login</MenuItem>,
+        <MenuItem 
+            key="register" 
+            component={Link} to="/register" 
+            onClick={handleClose}
+        >Register</MenuItem>
+    ]
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -69,6 +104,7 @@ export default function Navbar() {
                 >
                   <AccountCircle sx={{ fontSize: 36 }}/>
                 </IconButton>
+
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorEl}
@@ -85,21 +121,10 @@ export default function Navbar() {
                   onClose={handleClose}
                 >
 
-                    {isAuthenticated ? (
-                        <>
-                          <MenuItem onClick={handleClose}>Profile</MenuItem>
-                          <MenuItem onClick={handleClose}>My account</MenuItem>
-                          <MenuItem onClick={handleClose}>Logout</MenuItem>
-                        </>
-                      ) : (
-                        <>
-                          <MenuItem component={Link} to="/login" onClick={handleClose}>Login</MenuItem>
-                          <MenuItem component={Link} to="/register" onClick={handleClose}>Register</MenuItem>
-                        </>
-                      )
-                    }
-
+                { menuItems }
+                
                 </Menu>
+
               </div>
             </Box>
     
