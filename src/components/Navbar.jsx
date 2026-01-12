@@ -48,12 +48,14 @@ export default function Navbar() {
     ]:[
         <MenuItem 
             key="login" 
-            component={Link} to="/login" 
+            component={Link} 
+            to="/login" 
             onClick={handleClose}
         >Login</MenuItem>,
         <MenuItem 
             key="register" 
-            component={Link} to="/register" 
+            component={Link} 
+            to="/register" 
             onClick={handleClose}
         >Register</MenuItem>
     ]
