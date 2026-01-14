@@ -1,7 +1,9 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Container, Box, Button, TextField, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { login } from "../features/auth/authSlice";
+import { login, googleLogin } from "../features/auth/authSlice";
+import GoogleIcon from "@mui/icons-material/Google";
+
 
 const Login = () => {
 
@@ -23,39 +25,54 @@ const Login = () => {
     };
 
     return (
-        <Box 
-            mt={4}
-            sx={{
-                width: "300px",
-                margin: "auto"
-            }}
-        >
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    name="email"
-                    label="Email"
-                    fullWidth
-                    margin="normal"
-                    onChange={handleChange}
-                />
-                <TextField 
-                    name="password"
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    margin="normal"
-                    onChange={handleChange}
-                />
-                <Button 
-                    type="submit"
-                    variant="contained"
-                    disabled={loading}
-                    fullWidth
-                >
+        <Container maxWidth="xs">
+            <Box 
+                sx={{ mt: 8 }}
+            >
+                <Typography variant="h5" textAlign="center">
                     Login
-                </Button>
-            </form>
-        </Box>
+                </Typography>
+                
+                <Box component="form" onSubmit={handleSubmit}>
+                    <TextField
+                        name="email"
+                        label="Email"
+                        fullWidth
+                        margin="normal"
+                        onChange={handleChange}
+                    />
+                    <TextField 
+                        name="password"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        onChange={handleChange}
+                    />
+                    <Button 
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 2 }}
+                        disabled={loading}
+                    >
+                        Login
+                    </Button>
+
+                    <Button 
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<GoogleIcon />}
+                        sx={{ mt: 2 }}
+                        onClick={() => dispatch(googleLogin())}
+                    >
+                        Login with Google
+                    </Button>
+
+                </Box>
+            </Box>
+        </Container>
+
     );
 };
 

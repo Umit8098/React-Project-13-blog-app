@@ -3,6 +3,7 @@ import {
     registerUser,
     loginUser,
     logoutUser,
+    googleLoginUser,
 } from "./authService";
 
 export const register = createAsyncThunk(
@@ -27,6 +28,16 @@ export const login = createAsyncThunk(
     }
 );
 
+export const googleLogin = createAsyncThunk(
+    "auth/googleLogin",
+    async (_, thunkAPI) => {
+        try {
+            return await googleLoginUser();
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
+    }
+);
 
 export const logout = createAsyncThunk(
     "auth/logout",
@@ -64,6 +75,12 @@ const authSlice = createSlice({
         //     state.user = null;
         //     state.isAuthenticated = false;
         // },
+        setUser: (state, action) => {
+            state.user = action.payload;
+            state.isAuthenticated = !!action.payload;
+            state.loading = false;
+            state.error = null;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -95,11 +112,25 @@ const authSlice = createSlice({
                 state.error = action.payload;
             })
 
+            // GOOGLE LOGIN
+            .addCase(googleLogin.pending, (state)=>{
+                state.loading = true;
+            })
+            .addCase(googleLogin.fulfilled, (state, action)=>{
+                state.loading = false;
+                state.user = action.payload;
+                state.isAuthenticated = true;
+            })
+            .addCase(googleLogin.rejected, (state, action)=>{
+                state.loading = false;
+                state.error = action.payload;
+            })
+
             // LOGOUT
             .addCase(logout.fulfilled, (state) => {
                 state.user = null;
                 state.isAuthenticated = false;
-            });
+            })
     },
 });
 
@@ -110,4 +141,5 @@ const authSlice = createSlice({
 //     logout,
 // } = authSlice.actions;
 
+export const { setUser } = authSlice.actions;
 export default authSlice.reducer;
