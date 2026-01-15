@@ -51,7 +51,7 @@ export const logout = createAsyncThunk(
 const initialState = {
     user: null,
     isAuthenticated: false,
-    loading: false,
+    loading: true,
     error: null,
 };
 
@@ -91,8 +91,8 @@ const authSlice = createSlice({
             })
             .addCase(register.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = normalizeUser(action.payload);
-                state.isAuthenticated = true;
+                // state.user = normalizeUser(action.payload);
+                // state.isAuthenticated = true;
             })
             .addCase(register.rejected, (state, action) => {
                 state.loading = false;
@@ -105,8 +105,8 @@ const authSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = normalizeUser(action.payload);
-                state.isAuthenticated = true; 
+                // state.user = normalizeUser(action.payload);
+                // state.isAuthenticated = true; 
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
@@ -119,8 +119,8 @@ const authSlice = createSlice({
             })
             .addCase(googleLogin.fulfilled, (state, action)=>{
                 state.loading = false;
-                state.user = normalizeUser(action.payload);
-                state.isAuthenticated = true;
+                // state.user = normalizeUser(action.payload);
+                // state.isAuthenticated = true;
             })
             .addCase(googleLogin.rejected, (state, action)=>{
                 state.loading = false;

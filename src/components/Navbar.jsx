@@ -33,6 +33,8 @@ export default function Navbar() {
     ? [
         <MenuItem 
             key="profile" 
+            component={Link}
+            to="/profile"
             onClick={handleClose}
         >Profile</MenuItem>,
         <MenuItem 
@@ -76,7 +78,17 @@ export default function Navbar() {
                     // flex:1 
                     }}
             >
-                <IconButton color="inherit">
+                <IconButton 
+                    color="inherit"
+                    component={Link} 
+                    to="/"
+                    sx={{
+                        "&:hover img": {
+                          transform: "scale(1.05)",
+                          transition: "0.2s",
+                        },
+                    }}
+                >
                     <img src={logo} alt="logo" width="40px" />
                 </IconButton>
             </Box>

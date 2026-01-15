@@ -5,7 +5,8 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import PublicRoute from "../routes/PublicRoute";
 
-// import ProtectedRoute from "./routes/ProtectedRoute";
+import ProtectedRoute from "../routes/ProtectedRoute";
+import Profile from "../pages/Profile";
 // import CreatePost from "./pages/CreatePost";
 
 
@@ -32,6 +33,14 @@ const AppRouter = () => {
                         <PublicRoute>
                             <Register />
                         </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
                     }
                 />
                 {/* <Route

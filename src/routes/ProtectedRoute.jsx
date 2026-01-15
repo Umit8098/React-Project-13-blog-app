@@ -1,18 +1,23 @@
 import { useSelector } from "react-redux"
-import { useLocation, Navigate } from "react-router-dom";
+import { 
+    // useLocation, 
+    Navigate, 
+} from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
     const{ isAuthenticated, loading } = useSelector((state)=> state.auth);
-    const location = useLocation();
+    // const location = useLocation();
 
     // Auth state henüz net değilken redirect yapma
     if (loading) return null; //ya da Spinner
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" state={{ from: location }} replace />
-    }
+    // if (!isAuthenticated) {
+    //     return <Navigate to="/login" state={{ from: location }} replace />
+    // }
 
-    return children;
+    return isAuthenticated ? children : <Navigate to="/login" replace />
+    
+    // return children;
 };
 
 export default ProtectedRoute;
