@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 export const createUserIfNotExists = async(authUser) => {
@@ -21,11 +21,29 @@ export const createUserIfNotExists = async(authUser) => {
         };
 
         await setDoc(userRef, newUser);
-        
+
         const freshSnap = await getDoc(userRef);
         return freshSnap.data();
     }
 
     // ✅ Varsa mevcut user'ı dön
     return userSnap.data();
+};
+
+
+export const updateUserProfile = async(uid, data) => {
+    
+    if (!uid) throw new Error("UID is required");
+
+    const userRef = doc(db, "users", uid);
+
+    await updateDoc(userRef, {
+        ...data,
+        updatedAt: serverTimestamp(),    
+    });
+
+    return {
+        uid,
+        ...data,
+    };
 };

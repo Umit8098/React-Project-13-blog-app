@@ -1,12 +1,18 @@
 import { Box, Button, TextField, Typography, Avatar } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import { updateProfile } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
+
+// import { updateProfile } from "firebase/auth";
+// import { auth } from "../firebase/firebaseConfig";
+
 import { setUser } from "../features/auth/authSlice";
+
 import { normalizeUser } from "../utils/normalizeUser";
 
+import { updateUserProfile } from "../firebase/userService";
+
 const Profile = () => {
+
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -17,12 +23,20 @@ const Profile = () => {
     try {
       setLoading(true);
 
-      await updateProfile(auth.currentUser, {
-        displayName,
-      });
+    //   await updateProfile(auth.currentUser, {
+    //     displayName,
+    //   });
 
-      // Firebase user güncellendi → Redux sync
-      dispatch(setUser(normalizeUser(auth.currentUser)));
+    const updatedUser = await updateUserProfile(user.uid, {
+        displayName,
+    });
+
+    // Firebase user güncellendi → Redux sync
+    //   dispatch(setUser(normalizeUser(auth.currentUser)));
+
+    // 🔥 Redux sync (kritik nokta)
+    dispatch(setUser({...user, ...updatedUser}));
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -30,9 +44,11 @@ const Profile = () => {
     }
   };
 
-  if (!user) {
-  return <Typography align="center">Loading...</Typography>;
-  };
+//   if (!user) {
+//   return <Typography align="center">Loading...</Typography>;
+//   };
+
+  if (!user) return null;
 
   return (
     <Box
