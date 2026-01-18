@@ -11,6 +11,10 @@ import { normalizeUser } from "../utils/normalizeUser";
 
 import { updateUserProfile } from "../firebase/userService";
 
+// Upload + Firestore update
+import { uploadProfilePhoto } from "../firebase/storageService";
+
+
 const Profile = () => {
 
   const { user } = useSelector((state) => state.auth);
@@ -18,6 +22,8 @@ const Profile = () => {
 
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [loading, setLoading] = useState(false);
+
+  const [selectedFile, setSelectedFile] = useState(null); 
 
   const handleUpdateProfile = async () => {
     try {
@@ -48,6 +54,27 @@ const Profile = () => {
 //   return <Typography align="center">Loading...</Typography>;
 //   };
 
+  const handleFileChange = (e) => {
+      if (e.target.files[0]) {
+          setSelectedFile(e.target.files[0]);
+      }
+  };
+
+  const handleUploadPhoto = async () => {
+    if (!selectedFile) return;
+
+    try {
+        setLoading(true);
+        const photoURL = await uploadProfilePhoto(user.uid, selectedFile);
+        await updateUserProfile(user.uid, { photoURL });
+        dispatch(setUser({...user, photoURL}));
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setLoading(false);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -65,9 +92,21 @@ const Profile = () => {
       <Avatar
         src={user.photoURL || ""}
         sx={{ width: 80, height: 80, mx: "auto", mb: 2 }}
-      >
-        {user.displayName?.[0] || user.email?.[0]}
-      </Avatar>
+      />
+        {/* {user.displayName?.[0] || user.email?.[0]} */}
+        <Button variant="outlined" component="label" fullWidth>
+            Select Photo
+            <input hidden type="file" accept="image/*" onChange={handleFileChange} />
+        </Button>
+        <Button 
+            fullWidth
+            variant="contained"
+            sx={{ mt:2 }}
+            onClick={handleUploadPhoto}
+            disabled={loading || !selectedFile }
+        >
+            Upload Photo
+        </Button>
 
       <Typography variant="h6" gutterBottom>
         Profile
