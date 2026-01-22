@@ -12,12 +12,13 @@ import logo from "../assets/design.svg";
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice";
+import Avatar from '@mui/material/Avatar';
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
 //   const isAuthenticated = false; // şimdilik mock
-  const { isAuthenticated } = useSelector((state)=>state.auth);
+  const { isAuthenticated, user } = useSelector((state)=>state.auth);
   const dispatch = useDispatch();
 
   const handleMenu = (event) => {
@@ -110,13 +111,30 @@ export default function Navbar() {
               <div>
                 <IconButton
                   size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
+                  // aria-label="account of current user"
+                  // aria-controls="menu-appbar"
+                  // aria-haspopup="true"
                   onClick={handleMenu}
                   color="inherit"
                 >
-                  <AccountCircle sx={{ fontSize: 36 }}/>
+                  {isAuthenticated ? (
+                      <Avatar
+                        src={user?.photoURL || undefined}
+                        alt={user?.displayName || user?.email}
+                        sx={{ 
+                          width: 36, 
+                          height: 36,
+                          bgcolor: user?.photoURL ? "transparent" : "#FFD369",
+                          color: "#000",
+                          border: "2px solid #FFD369", 
+                        }}>
+                          {/* photo yoksa harf göster */}
+                          {user?.displayName?.[0] || user?.email?.[0]}
+                        </Avatar>
+                    ) : (
+                      <AccountCircle sx={{ fontSize: 36 }}/>
+                    )
+                  }
                 </IconButton>
 
                 <Menu

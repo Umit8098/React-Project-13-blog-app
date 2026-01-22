@@ -23,11 +23,12 @@ export const createUserIfNotExists = async(authUser) => {
         await setDoc(userRef, newUser);
 
         const freshSnap = await getDoc(userRef);
-        return freshSnap.data();
+        return normalizeFirestoreUser(freshSnap.data());
     }
 
     // ✅ Varsa mevcut user'ı dön
-    return userSnap.data();
+    // return userSnap.data();
+    return normalizeFirestoreUser(userSnap.data());
 };
 
 
@@ -42,8 +43,26 @@ export const updateUserProfile = async(uid, data) => {
         updatedAt: serverTimestamp(),    
     });
 
-    return {
+    return normalizeFirestoreUser({
         uid,
         ...data,
-    };
+        updatedAt: {
+            toMillis: () => Date.now(),
+        },
+    });
+};
+
+
+const normalizeFirestoreUser = (data) => {
+  if (!data) return null;
+
+  return {
+    ...data,
+    createdAt: data.createdAt?.toMillis
+      ? data.createdAt.toMillis()
+      : null,
+    updatedAt: data.updatedAt?.toMillis
+      ? data.updatedAt.toMillis()
+      : null,
+  };
 };

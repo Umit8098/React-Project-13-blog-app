@@ -1,11 +1,17 @@
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth } from "./firebaseConfig";
 import { storage } from "./firebaseConfig";
 
 export const uploadProfilePhoto = async ( uid, file ) => {
-    if ( !uid || !file ) throw new Error("UID and file are required");
+    
+    const user = auth.currentUser;
 
-    const fileRef = ref(storage, `profilePhotos/${uid}`)
+    if ( !user ) throw new Error("User not authenticated");
 
+    const fileRef = ref(
+        storage, 
+        `profilePhotos/${user.uid}/avatar.jpg`);
+    
     await uploadBytes(fileRef, file);
 
     const downloadURL = await getDownloadURL(fileRef);

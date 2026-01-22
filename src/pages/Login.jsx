@@ -45,6 +45,7 @@ const Login = () => {
                         name="password"
                         label="Password"
                         type="password"
+                        autoComplete="current-password"
                         fullWidth
                         margin="normal"
                         onChange={handleChange}

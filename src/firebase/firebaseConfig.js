@@ -12,6 +12,8 @@ const firebaseConfig = {
   authDomain: "react-blog-app-23841.firebaseapp.com",
   projectId: "react-blog-app-23841",
   storageBucket: "react-blog-app-23841.firebasestorage.app",
+  // ✅ DOĞRU BUCKET
+  // storageBucket: "react-blog-app-23841.appspot.com",
   messagingSenderId: "686979033824",
   appId: "1:686979033824:web:b56c203b34330988ebfe85"
 };

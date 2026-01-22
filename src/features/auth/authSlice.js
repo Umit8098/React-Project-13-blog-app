@@ -44,6 +44,7 @@ export const logout = createAsyncThunk(
     "auth/logout",
     async () => {
         await logoutUser();
+        console.log("logout: ok")
     }
 );
 

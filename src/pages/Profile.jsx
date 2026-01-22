@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 
 // import { updateProfile } from "firebase/auth";
-// import { auth } from "../firebase/firebaseConfig";
+import { auth } from "../firebase/firebaseConfig";
 
 import { setUser } from "../features/auth/authSlice";
 
@@ -25,30 +25,30 @@ const Profile = () => {
 
   const [selectedFile, setSelectedFile] = useState(null); 
 
-  const handleUpdateProfile = async () => {
-    try {
-      setLoading(true);
+  // const handleUpdateProfile = async () => {
+  //   try {
+  //     setLoading(true);
 
-    //   await updateProfile(auth.currentUser, {
-    //     displayName,
-    //   });
+  //   //   await updateProfile(auth.currentUser, {
+  //   //     displayName,
+  //   //   });
 
-    const updatedUser = await updateUserProfile(user.uid, {
-        displayName,
-    });
+  //   const updatedUser = await updateUserProfile(user.uid, {
+  //       displayName,
+  //   });
 
-    // Firebase user güncellendi → Redux sync
-    //   dispatch(setUser(normalizeUser(auth.currentUser)));
+  //   // Firebase user güncellendi → Redux sync
+  //   //   dispatch(setUser(normalizeUser(auth.currentUser)));
 
-    // 🔥 Redux sync (kritik nokta)
-    dispatch(setUser({...user, ...updatedUser}));
+  //   // 🔥 Redux sync (kritik nokta)
+  //   dispatch(setUser({...user, ...updatedUser}));
 
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
 //   if (!user) {
 //   return <Typography align="center">Loading...</Typography>;
@@ -60,22 +60,73 @@ const Profile = () => {
       }
   };
 
-  const handleUploadPhoto = async () => {
-    if (!selectedFile) return;
+  // const handleUploadPhoto = async () => {
+  //   if (!selectedFile) return;
+
+  //   try {
+  //       setLoading(true);
+
+  //       console.log("AUTH UID (redux user):", user?.uid);
+  //       console.log("CURRENT USER (firebase):", auth.currentUser);
+
+  //       const photoURL = await uploadProfilePhoto(user.uid,selectedFile);
+  //       const updateUser = await updateUserProfile(user.uid, { photoURL });
+
+  //       dispatch(setUser({...user, ...updateUser }));
+  //   } catch (error) {
+  //       console.error(error);
+  //   } finally {
+  //       setLoading(false);
+  //   }
+  // };
+
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
 
     try {
-        setLoading(true);
-        const photoURL = await uploadProfilePhoto(user.uid, selectedFile);
-        await updateUserProfile(user.uid, { photoURL });
-        dispatch(setUser({...user, photoURL}));
+      setLoading(true);
+
+      let photoURL = user.photoURL;
+
+      // 1️⃣ Foto varsa → upload
+      if (selectedFile) {
+        photoURL = await uploadProfilePhoto(user.uid, selectedFile);
+      }
+
+      // 2️⃣ Firestore update (tek sefer)
+      const updatedUser = await updateUserProfile(user.uid, {
+        displayName,
+        photoURL,
+      });
+
+      // 3️⃣ Redux sync
+      dispatch(setUser({
+        ...user,
+        ...updatedUser,
+      }));
+
+      setSelectedFile(null);
     } catch (error) {
-        console.error(error);
+        console.error("Profile update failed:", error);
     } finally {
         setLoading(false);
     }
   };
 
   if (!user) return null;
+
+// test upload without auth
+const testUploadWithoutAuth = async () => {
+  console.log("CURRENT USER:", auth.currentUser);
+
+  try {
+    await uploadProfilePhoto("FAKE_UID", new File(["test"], "test.txt"));
+    console.log("❌ Upload OLDU (olmamalı)");
+  } catch (err) {
+    console.log("✅ Upload BLOCKLANDI:", err.message);
+  }
+};
 
   return (
     <Box
@@ -90,7 +141,11 @@ const Profile = () => {
       }}
     >
       <Avatar
-        src={user.photoURL || ""}
+        // src={user.photoURL || ""}
+        src={
+          selectedFile ? URL.createObjectURL(selectedFile) :
+          user.photoURL || ""
+        }
         sx={{ width: 80, height: 80, mx: "auto", mb: 2 }}
       />
         {/* {user.displayName?.[0] || user.email?.[0]} */}
@@ -98,7 +153,7 @@ const Profile = () => {
             Select Photo
             <input hidden type="file" accept="image/*" onChange={handleFileChange} />
         </Button>
-        <Button 
+        {/* <Button 
             fullWidth
             variant="contained"
             sx={{ mt:2 }}
@@ -106,7 +161,7 @@ const Profile = () => {
             disabled={loading || !selectedFile }
         >
             Upload Photo
-        </Button>
+        </Button> */}
 
       <Typography variant="h6" gutterBottom>
         Profile
@@ -132,10 +187,11 @@ const Profile = () => {
         fullWidth
         variant="contained"
         sx={{ mt: 2 }}
-        onClick={handleUpdateProfile}
+        // onClick={handleUpdateProfile}
+        onClick={handleSaveProfile}
         disabled={loading}
       >
-        Save Changes
+        {loading ? "Saving..." : "Save Profile"}
       </Button>
     </Box>
   );

@@ -25,7 +25,9 @@ dist-ssr
 
 
 # my_files
-/Readme_local.md
-Readme_local.md
+/Readme_firebase_auth_local.md
+/Readme_firebase_blog_local.md
+Readme_firebase_auth_local.md
+Readme_firebase_blog_local.md
 /Readme_deploy.md
 Readme_deploy.md
