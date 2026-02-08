@@ -1,7 +1,12 @@
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
-export const createPost = async ({ title, content, user }) => {
+export const createPost = async ({ 
+    title, 
+    content, 
+    user, 
+    imageURL = "",
+ }) => {
     
     if (!user) throw new Error("Auth required to create a post.");
     if (!title || !content) throw new Error("Title and content are required.");
@@ -9,6 +14,7 @@ export const createPost = async ({ title, content, user }) => {
     const postData = {
         title,
         content,
+        imageURL,
         authorId: user.uid,
         authorName: user.displayName || user.email,
         authorPhotoURL: user.photoURL || "",

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { createPost } from "../firebase/postService";
 import { useNavigate } from "react-router-dom";
+import { uploadPostImage } from "../firebase/storageService";
 
 const CreatePost = () => {
     const { user } = useSelector((state) => state.auth);
@@ -11,6 +12,13 @@ const CreatePost = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
+    const [image, setImage] = useState(null);
+
+    const handleImageChange = (e) => {
+        if (e.target.files[0]) {
+            setImage(e.target.files[0]);
+        }
+    };
 
     const handleCreatePost = async () => {
         if (!title || !content) {
@@ -20,7 +28,18 @@ const CreatePost = () => {
 
         try {
             setLoading(true);
-            const newPost = await createPost({ title, content, user });
+            let imageURL = "";
+            // 🔥 Foto varsa → upload et
+            if (image) {
+                imageURL = await uploadPostImage(user.uid, image);
+            }
+            // 🔥 Postu oluştururken imageURL'yi de gönder
+            const newPost = await createPost({ 
+                title, 
+                content, 
+                user, 
+                imageURL,
+             });
             console.log("Post created:", newPost);
             // Redirect to home or post detail page after creation
             navigate("/");
@@ -57,6 +76,41 @@ const CreatePost = () => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)} 
             />
+            <Button
+                variant="outlined"
+                component="label"
+                fullWidth
+                sx={{ mt: 2 }}
+            >
+              Select Image
+              <input
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+            />
+            </Button>
+
+            {image && (
+                <Box mt={2} textAlign="center">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt="preview"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: 200,
+                      borderRadius: 8,
+                    }}
+                  />
+                </Box>
+            )}
+
+            {image && (
+              <Typography variant="body2" mt={1}>
+                Selected: {image.name}
+              </Typography>
+            )}
+
             <Button
                 fullWidth
                 variant="contained"
