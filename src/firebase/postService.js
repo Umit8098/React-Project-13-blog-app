@@ -1,4 +1,13 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { 
+    collection, 
+    addDoc, 
+    serverTimestamp, 
+    getDocs,
+    query,
+    orderBy,
+    doc,
+    getDoc,
+ } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 export const createPost = async ({ 
@@ -29,3 +38,31 @@ export const createPost = async ({
         ...postData 
     };
 };   
+
+export const getPosts = async () => {
+    const q = query(
+        collection(db, "posts"), 
+        orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+};
+
+export const getPostById = async (id) => {
+    const docRef = doc(db, "posts", id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+        throw new Error("Post not found");
+    }
+
+    return { 
+        id: docSnap.id, 
+        ...docSnap.data() 
+    };
+};

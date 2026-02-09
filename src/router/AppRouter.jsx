@@ -8,6 +8,7 @@ import PublicRoute from "../routes/PublicRoute";
 import ProtectedRoute from "../routes/ProtectedRoute";
 import Profile from "../pages/Profile";
 import CreatePost from "../pages/CreatePost";
+import PostDetail from "../pages/PostDetail";
 
 
 const AppRouter = () => {
@@ -57,6 +58,12 @@ const AppRouter = () => {
                       <ProtectedRoute>
                         <CreatePost />
                       </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/post/:id"
+                    element={
+                        <PostDetail />
                     }
                 />
             </Routes>
