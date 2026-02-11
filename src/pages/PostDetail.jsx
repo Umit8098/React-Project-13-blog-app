@@ -9,12 +9,19 @@ import {
     Divider,
 } from "@mui/material";
 import { getPostById } from "../firebase/postService";
-
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
+import { deletePost } from "../firebase/postService";
 
 const PostDetail = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { user } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+    // const isOwner = user?.uid === post?.authorId;
+    const isOwner = user && post && user.uid === post.authorId;
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -30,6 +37,20 @@ const PostDetail = () => {
         fetchPost();
     }, [id]);
 
+    const handleDelete = async () => {
+        const confirm = window.confirm("Are you sure you want to delete this post?");
+
+        if (!confirm) return;
+        
+        try {
+            await deletePost(post.id, user.uid);
+            navigate("/"); // Redirect to home page after deletion
+        } catch (error) {
+            console.error("Delete post error:", error);
+            alert("Failed to delete post. Please try again.");
+        }
+    };
+
     if (loading) {
         return <Typography>Loading...</Typography>;
     }
@@ -39,7 +60,7 @@ const PostDetail = () => {
     }
 
     return (
-        <Box maxWidth="800px" mx="auto" mt={4}>
+        <Box maxWidth="400px" mx="auto" mt={4}>
             {/* Image */}
             {post.imageURL && (
                 <CardMedia
@@ -73,6 +94,25 @@ const PostDetail = () => {
                     </Typography>
                 </Box>
             </Stack>
+
+            {/* Owner Actions */}
+            {isOwner && (
+                <Box sx={{ mb: 3, display: "flex", gap: 2 }}>
+                    <Button 
+                        variant="outlined" 
+                        onClick={()=> navigate(`/edit-post/${post.id}`)}
+                    >
+                        Edit
+                    </Button>
+                    <Button 
+                        variant="outlined" 
+                        color="error"
+                        onClick={handleDelete}
+                    >
+                        Delete
+                    </Button>
+                </Box>
+            )}
 
             <Divider sx={{ my: 3 }} />
             {/* Content */}

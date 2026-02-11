@@ -7,6 +7,7 @@ import {
     orderBy,
     doc,
     getDoc,
+    deleteDoc,
  } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -65,4 +66,12 @@ export const getPostById = async (id) => {
         id: docSnap.id, 
         ...docSnap.data() 
     };
+};
+
+export const deletePost = async (postId, userId) => {
+    if (!postId) throw new Error("Post ID is required.");
+    if (!userId) throw new Error("User not authenticated.");
+
+    const postRef = doc(db, "posts", postId);
+     await deleteDoc(postRef);
 };

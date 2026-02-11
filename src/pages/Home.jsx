@@ -36,7 +36,7 @@ const Home = () => {
     }
 
     return (
-        <Box maxWidth="900px" mx="auto" mt={4}>
+        <Box maxWidth="400px" mx="auto" mt={4}>
             {posts.map((post) => (
                 <Card 
                     key={post.id} 
