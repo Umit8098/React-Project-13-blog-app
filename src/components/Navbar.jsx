@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import Avatar from '@mui/material/Avatar';
 
-export default function Navbar() {
+export default function Navbar({mode, toggleTheme}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
 //   const isAuthenticated = false; // şimdilik mock
@@ -165,46 +165,3 @@ export default function Navbar() {
     </Box>
   );
 }
-
-
-
-
-
-// First Navbar
-// import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-// import { Link } from "react-router-dom";
-
-// const Navbar = () => {
-//   return (
-//     <AppBar position="static">
-//       <Toolbar>
-//         {/* Logo / Title */}
-//         <Typography
-//           variant="h6"
-//           component={Link}
-//           to="/"
-//           sx={{
-//             flexGrow: 1,
-//             textDecoration: "none",
-//             color: "inherit",
-//           }}
-//         >
-//           Blog App
-//         </Typography>
-
-//         {/* Navigation */}
-//         <Box>
-//           <Button color="inherit" component={Link} to="/login">
-//             Login
-//           </Button>
-//           <Button color="inherit" component={Link} to="/register">
-//             Register
-//           </Button>
-//         </Box>
-//       </Toolbar>
-//     </AppBar>
-//   );
-// };
-
-// export default Navbar;
-

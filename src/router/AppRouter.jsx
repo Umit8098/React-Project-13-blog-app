@@ -9,12 +9,13 @@ import ProtectedRoute from "../routes/ProtectedRoute";
 import Profile from "../pages/Profile";
 import CreatePost from "../pages/CreatePost";
 import PostDetail from "../pages/PostDetail";
+import EditPost from "../pages/EditPost";
 
 
-const AppRouter = () => {
+const AppRouter = ({ mode, toggleTheme }) => {
     return (
         <BrowserRouter>
-        <Layout>
+        <Layout mode={mode} toggleTheme={toggleTheme}>
             <Routes>
                 <Route 
                     path="/" 
@@ -66,6 +67,15 @@ const AppRouter = () => {
                         <PostDetail />
                     }
                 />
+                <Route
+                    path="/edit-post/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditPost />
+                      </ProtectedRoute>
+                    }
+                />
+
             </Routes>
         </Layout>
         </BrowserRouter>

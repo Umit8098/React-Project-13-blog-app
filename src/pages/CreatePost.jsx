@@ -29,18 +29,21 @@ const CreatePost = () => {
         try {
             setLoading(true);
             let imageURL = "";
+            let imagePath = "";
             // 🔥 Foto varsa → upload et
             if (image) {
-                imageURL = await uploadPostImage(user.uid, image);
+                const uploaded = await uploadPostImage(user.uid, image);
+                imagePath = uploaded.imagePath;
+                imageURL = uploaded.imageURL;
             }
-            // 🔥 Postu oluştururken imageURL'yi de gönder
-            const newPost = await createPost({ 
+
+            await createPost({ 
                 title, 
                 content, 
                 user, 
                 imageURL,
-             });
-            console.log("Post created:", newPost);
+                imagePath,
+             });            
             // Redirect to home or post detail page after creation
             navigate("/");
         } catch (error) {

@@ -1,17 +1,18 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+const getTheme = (mode = "light") =>
+  createTheme({
     palette: {
-        primary: {
-            main: "#1976d2",
-        },
+      mode,
+      background: {
+        default: mode === "dark" ? "#000000" : "#ffffff",
+        paper: mode === "dark" ? "#16181c" : "#ffffff",
+      },
+      divider: mode === "dark" ? "#2f3336" : "#e0e0e0",
     },
     typography: {
-        fontFamily: "Arial, sans-serif",
-        h5: {
-            fontFamily: "Girassol",
-        },
+      fontFamily: "Inter, Roboto, sans-serif",
     },
-});
+  });
 
-export default theme;
+export default getTheme;
