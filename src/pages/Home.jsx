@@ -14,6 +14,13 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import IconButton from "@mui/material/IconButton";
 import { keyframes } from "@mui/system";
 
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
+import { Link } from "react-router-dom";
+
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+
+
 const pop = keyframes`
   0% { transform: scale(1); }
   50% { transform: scale(1.4); }
@@ -21,10 +28,27 @@ const pop = keyframes`
 `;
 
 const Home = () => {
+    // const MAX_CHARS = 180;
+    const MAX_CHARS = 140; // mobilde daha az gösterelim
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
+    const { isAuthenticated } = useSelector((state) => state.auth);
+
+    const [expandedPosts, setExpandedPosts] = useState({});
+
+    const toggleExpand = (postId) => {
+        setExpandedPosts(prev => ({
+            ...prev,
+            [postId]: !prev[postId],
+        }));
+    };
+
+    const getTruncatedText = (text, max) => {
+        if (text.length <= max) return text;
+        return text.slice(0, max) + "...";
+    };
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -56,12 +80,15 @@ const Home = () => {
         setPosts(prev =>
             prev.map(p =>
                 p.id === post.id
-                    ? {
-                        ...p,
-                        likes: isLiked
-                            ? p.likes.filter(id => id !== user.uid)
-                            : [...p.likes, user.uid],
-                    }
+                    ? (() => {
+                        const currentLikes = p.likes ?? [];
+                        return {
+                            ...p,
+                            likes: isLiked
+                                ? currentLikes.filter(id => id !== user.uid)
+                                : [...currentLikes, user.uid],
+                        };
+                    })()
                     : p
             )
         );
@@ -72,11 +99,19 @@ const Home = () => {
     }
 
     return (
-        <Box maxWidth="600px" mx="auto" sx={{ borderLeft: "1px solid #eee", borderRight: "1px solid #eee" }}>
-
+        <Box 
+            maxWidth={{ xs: "100%", sm: 680, md: 760 }} 
+            mx="auto" 
+            sx={{ 
+                borderLeft: { xs: "none", sm: "1px solid" },
+                borderRight: { xs: "none", sm: "1px solid" },
+                borderColor: "divider",
+            }}
+        >
             {posts.map((post) => {
                 const isLiked = user && post.likes?.includes(user.uid);
                 const isOwner = user && user.uid === post.authorId;
+                const commentCount = post.commentCount ?? 0;
 
                 return (
                     <Box
@@ -84,9 +119,9 @@ const Home = () => {
                         onClick={() => navigate(`/post/${post.id}`)}
                         sx={{
                             display: "flex",
-                            gap: 2,
-                            px: 2,
-                            py: 2,
+                            gap: { xs: 1.25, sm: 2 },
+                            px: { xs: 1.5, sm: 2 },
+                            py: { xs: 1.5, sm: 2 },
                             borderBottom: "1px solid",
                             borderColor: "divider",
                             cursor: "pointer",
@@ -96,7 +131,13 @@ const Home = () => {
                         }}
                     >
                         {/* Avatar */}
-                        <Avatar src={post.authorPhotoURL}>
+                        <Avatar 
+                            src={post.authorPhotoURL}
+                            sx={{ 
+                                width: {xs: 34, sm: 40}, 
+                                height: {xs: 34, sm: 40} 
+                            }}
+                        >
                             {post.authorName?.[0]}
                         </Avatar>
 
@@ -121,16 +162,42 @@ const Home = () => {
                             {/* Text */}
                             <Typography
                                 mt={0.5}
-                                fontSize={14}
                                 sx={{
-                                    display: "-webkit-box",
-                                    WebkitLineClamp: 3,
+                                    whiteSpace: "pre-line",
+                                    display: expandedPosts[post.id] ? "block" : "-webkit-box",
+                                    WebkitLineClamp: expandedPosts[post.id] ? "unset" : 3,
                                     WebkitBoxOrient: "vertical",
                                     overflow: "hidden",
+                                    fontSize: { xs: 13.5, sm: 14 },
                                 }}
                             >
-                                {post.content}
+                                {expandedPosts[post.id] 
+                                    ? post.content 
+                                    : getTruncatedText(post.content, MAX_CHARS)}
                             </Typography>
+
+                            {post.content.length > MAX_CHARS && (
+                              <Typography
+                                variant="body2"
+                                fontSize={13}
+                                sx={{
+                                  mt: 0.5,
+                                  color: "primary.main",
+                                  fontWeight: 500,
+                                  cursor: "pointer",
+                                  width: "fit-content",
+                                  "&:hover": {
+                                    textDecoration: "underline",
+                                  },
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation(); // 🚨 çok önemli
+                                  toggleExpand(post.id);
+                                }}
+                              >
+                                {expandedPosts[post.id] ? "Show less" : "Show more"}
+                              </Typography>
+                            )}
 
                             {/* Image */}
                             {post.imageURL && (
@@ -152,9 +219,15 @@ const Home = () => {
                             <Stack
                                 direction="row"
                                 alignItems="center"
-                                spacing={1}
-                                mt={1}
+                                // spacing={1}
+                                mt={1.25}
                             >
+                                <Stack 
+                                    direction="row" 
+                                    spacing={0.5} 
+                                    alignItems="center" 
+                                    sx={{ minWidth: 64 }}
+                                >
                                 <IconButton
                                     size="small"
                                     disabled={!user || isOwner}
@@ -185,22 +258,55 @@ const Home = () => {
                                 </IconButton>
 
                                 <Typography
-                                    variant="body2"
+                                    // variant="body2"
                                     // color="text.secondary"
                                     fontSize={13}
-                                    sx={{
-                                        transition: "transform 0.15s ease",
-                                        transform: isLiked ? "scale(1.2)" : "scale(1)",
-                                    }}
+                                    // sx={{
+                                    //     transition: "transform 0.15s ease",
+                                    //     transform: isLiked ? "scale(1.2)" : "scale(1)",
+                                    // }}
                                 >
                                     {post.likes?.length || 0}
                                 </Typography>
+                                </Stack>
+
+                                <Stack direction="row" spacing={0.5} alignItems="center" sx={{ minWidth: 64 }}>
+                                    <IconButton
+                                      size="small"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/post/${post.id}`);
+                                      }}
+                                      sx={{ "&:hover": { color: "primary.main" } }}
+                                    >
+                                      <ChatBubbleOutlineIcon fontSize="small" />
+                                    </IconButton>
+                                    <Typography fontSize={13}>{commentCount}</Typography>
+                                </Stack>
                             </Stack>
 
                         </Box>
                     </Box>
                 );
             })}
+            {isAuthenticated && (
+                <Fab
+                  variant="extended" 
+                  component={Link}
+                  to="/create-post"
+                  color="primary"
+                  aria-label="create post"
+                  sx={{
+                    position: "fixed",
+                    bottom: { xs: 14, md: 24 },
+                    right: { xs: 14, md: 24 },
+                    zIndex: 1200,
+                    boxShadow: 6,
+                  }}
+                >
+                    <AddIcon />
+                </Fab>
+            )}
         </Box>
     );
 };

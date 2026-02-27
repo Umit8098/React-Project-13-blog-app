@@ -10,6 +10,7 @@ import Profile from "../pages/Profile";
 import CreatePost from "../pages/CreatePost";
 import PostDetail from "../pages/PostDetail";
 import EditPost from "../pages/EditPost";
+import NotFound from "../pages/NotFound";
 
 
 const AppRouter = ({ mode, toggleTheme }) => {
@@ -45,14 +46,6 @@ const AppRouter = ({ mode, toggleTheme }) => {
                       </ProtectedRoute>
                     }
                 />
-                {/* <Route
-                    path="/create"
-                    element={
-                      <ProtectedRoute>
-                        <CreatePost />
-                      </ProtectedRoute>
-                    }
-                /> */}
                 <Route
                     path="/create-post"
                     element={
@@ -75,7 +68,11 @@ const AppRouter = ({ mode, toggleTheme }) => {
                       </ProtectedRoute>
                     }
                 />
-
+                <Route
+                    path="*"
+                    element={<NotFound />}
+                />
+                
             </Routes>
         </Layout>
         </BrowserRouter>

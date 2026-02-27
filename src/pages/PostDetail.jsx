@@ -8,13 +8,21 @@ import {
   Divider,
   IconButton,
   Button,
+  Fab,
+  Paper,
+  Collapse,
 } from "@mui/material";
+import AddCommentIcon from "@mui/icons-material/AddComment";
+import CloseIcon from "@mui/icons-material/Close";
 import { keyframes } from "@mui/system";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 import { getPostById, deletePost, toggleLikePost } from "../firebase/postService";
 import { useSelector } from "react-redux";
+
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+
 
 const pop = keyframes`
   0% { transform: scale(1); }
@@ -31,6 +39,9 @@ const PostDetail = () => {
 
   const isOwner = user && post && user.uid === post.authorId;
   const isLiked = Boolean(user && post && post.likes?.includes(user.uid));
+  const commentCount = post?.commentCount ?? 0;
+
+  const [ showCommentHint, setShowCommentHint ] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -53,9 +64,12 @@ const PostDetail = () => {
 
     setPost((prev) => ({
       ...prev,
-      likes: isLiked
-        ? prev.likes.filter((uid) => uid !== user.uid)
-        : [...prev.likes, user.uid],
+      likes: (() => {
+        const currentLikes = prev.likes ?? [];
+        return isLiked
+          ? currentLikes.filter((uid) => uid !== user.uid)
+          : [...currentLikes, user.uid];
+      })(),
     }));
   };
 
@@ -77,20 +91,67 @@ const PostDetail = () => {
   if (!post) return <Typography>Post not found.</Typography>;
 
   return (
+    <Box>
+      
+        <Box 
+          maxWidth={{ xs: "100%", sm: 680, md: 760 }}
+          mx="auto" 
+          px={{ xs: 1.5, sm: 2 }} 
+          py={1}
+          sx={{
+            position: "sticky",
+            top: 0,
+            zIndex: 1200,
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? "rgba(255, 255, 255, 0.78)"
+                : "rgba(18, 18, 18, 0.72)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            sx={{
+              cursor: "pointer",
+              width: "fit-content",
+              "&:hover": { opacity: 0.8 },
+            }}
+            onClick={() => {
+              if (window.history.length > 1) navigate(-1);
+              else navigate("/");
+            }}
+          >
+            <Typography fontSize={20} fontWeight="bold">←</Typography>
+            <Typography fontSize={15} fontWeight="bold">Gönderi</Typography>
+          </Stack>
+        
+      </Box>
+    
     <Box
-      maxWidth="600px"
+      maxWidth={{ xs: "100%", sm: 680, md: 760 }}
       mx="auto"
       sx={{
-        borderLeft: "1px solid",
-        borderRight: "1px solid",
+        borderLeft: {xs: "none", sm: "1px solid"},
+        borderRight: {xs: "none", sm: "1px solid"},
         borderColor: "divider",
-        px: 2,
-        py: 3,
+        px: { xs: 1.5, sm: 2 },
+        py: { xs: 2, sm: 3 },
+        pb: 10,
       }}
     >
+
       {/* Header */}
       <Stack direction="row" spacing={2} alignItems="center" mb={2}>
-        <Avatar src={post.authorPhotoURL}>
+        <Avatar 
+        src={post.authorPhotoURL}
+        sx={{ width: {xs: 34, sm: 40}, height: {xs: 34, sm: 40} }}
+        >
           {post.authorName?.[0]}
         </Avatar>
 
@@ -106,7 +167,11 @@ const PostDetail = () => {
       </Stack>
 
       {/* Content */}
-      <Typography fontSize={15} lineHeight={1.8} mb={2}>
+      <Typography 
+        sx={{ fontSize: {xs: 14, sm: 15}}} 
+        lineHeight={1.8} 
+        mb={2}
+      >
         {post.content}
       </Typography>
 
@@ -127,7 +192,8 @@ const PostDetail = () => {
       )}
 
       {/* Like Section */}
-      <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+      <Stack direction="row" alignItems="center" mb={2}>
+        <Stack direction="row" spacing={0.5} alignItems="center" sx={{ minWidth: 64 }}>
         <IconButton
           size="small"
           disabled={!user || isOwner}
@@ -151,13 +217,22 @@ const PostDetail = () => {
 
         <Typography
           fontSize={13}
-          sx={{
-            transition: "transform 0.15s ease",
-            transform: isLiked ? "scale(1.2)" : "scale(1)",
-          }}
         >
           {post.likes?.length || 0}
         </Typography>
+        </Stack>
+
+        <Stack direction="row" spacing={0.5} alignItems="center" sx={{ minWidth: 64 }}>
+          <IconButton
+            size="small"
+            onClick={() => setShowCommentHint(true)}
+            sx={{ "&:hover": { color: "primary.main" } }}
+          >
+            <ChatBubbleOutlineIcon fontSize="small" />
+          </IconButton>
+          <Typography fontSize={13}>{commentCount}</Typography>
+        </Stack>
+
       </Stack>
 
       <Divider sx={{ my: 2 }} />
@@ -184,6 +259,47 @@ const PostDetail = () => {
         </Stack>
       )}
     </Box>
+    
+    <Fab 
+      variant="extended"
+      color="primary"
+      onClick={() => setShowCommentHint((prev) => !prev)}
+      sx={{ 
+        position: "fixed", 
+        right: { xs: 14, sm: 24 },
+        bottom: { xs: 14, sm: 24 },
+        zIndex: 20,
+      }}
+    >
+        <AddCommentIcon sx={{ mr: 1 }} />
+        Comment
+    </Fab>
+
+    <Collapse in={showCommentHint} >
+      <Paper
+        elevation={6}
+        sx={{
+          position: "fixed",
+          right: { xs: 16, sm: 24 },
+          bottom: { xs: 84, sm: 92 },
+          width: { xs: "calc(100% - 32px)", sm: "320px" },
+          p: 2,
+          zIndex: 20,
+        }}
+      >
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography fontSize={14} fontWeight={600} >
+            Comment feature is coming soon!
+          </Typography>
+          <IconButton size="small" onClick={() => setShowCommentHint(false)}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Stack>
+      </Paper>
+    </Collapse>
+    
+    </Box>
+
   );
 };
 

@@ -5,7 +5,6 @@ import {
     logoutUser,
     googleLoginUser,
 } from "./authService";
-import { normalizeUser } from "../../utils/normalizeUser";
 
 export const register = createAsyncThunk(
     "auth/register",
@@ -90,7 +89,7 @@ const authSlice = createSlice({
             .addCase(register.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(register.fulfilled, (state, action) => {
+            .addCase(register.fulfilled, (state) => {
                 state.loading = false;
                 // state.user = normalizeUser(action.payload);
                 // state.isAuthenticated = true;
@@ -104,7 +103,7 @@ const authSlice = createSlice({
             .addCase(login.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(login.fulfilled, (state, action) => {
+            .addCase(login.fulfilled, (state) => {
                 state.loading = false;
                 // state.user = normalizeUser(action.payload);
                 // state.isAuthenticated = true; 
@@ -118,7 +117,7 @@ const authSlice = createSlice({
             .addCase(googleLogin.pending, (state)=>{
                 state.loading = true;
             })
-            .addCase(googleLogin.fulfilled, (state, action)=>{
+            .addCase(googleLogin.fulfilled, (state)=>{
                 state.loading = false;
                 // state.user = normalizeUser(action.payload);
                 // state.isAuthenticated = true;
