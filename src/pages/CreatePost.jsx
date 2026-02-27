@@ -21,8 +21,8 @@ const CreatePost = () => {
     };
 
     const handleCreatePost = async () => {
-        if (!title || !content) {
-            alert("Title and content are required.");
+        if (!content.trim()) {
+            alert("Content is required.");
             return;
         }
 

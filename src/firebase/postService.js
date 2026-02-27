@@ -24,11 +24,11 @@ export const createPost = async ({
  }) => {
     
     if (!user) throw new Error("Auth required to create a post.");
-    if (!title || !content) throw new Error("Title and content are required.");
+    if (!content?.trim()) throw new Error("Content is required.");
 
     const postData = {
-        title,
-        content,
+        title: title?.trim() || "",
+        content: content.trim(),
         imageURL,
         imagePath,
         authorId: user.uid,
