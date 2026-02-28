@@ -51,6 +51,10 @@ Modern, mobile-first blog application with Firebase Auth, Firestore CRUD, likes,
   <img src="./blog-app-new.png" alt="blog-overview" width="800"/>
 </div>
 
+<div align="center">
+  ![tutorial gif](blog-app.gif)
+</div>
+
 ---
 
 ## 📖 Description
