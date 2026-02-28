@@ -1,11 +1,11 @@
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Frontend-React%20(Vite)-blue?logo=react" />
-  <img src="https://img.shields.io/badge/UI-Material%20UI-007FFF?logo=mui" />
-  <img src="https://img.shields.io/badge/Auth-Firebase-orange?logo=firebase" />
-  <img src="https://img.shields.io/badge/Database-Firestore-yellow?logo=firebase" />
-  <img src="https://img.shields.io/badge/State-Redux%20Toolkit-purple" />
-  <img src="https://img.shields.io/badge/Deployment-Netlify-00C7B7?logo=netlify" />
+  <img src="https://img.shields.io/badge/Frontend-React%20(Vite)-61DAFB?style=flat&logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/UI-Material%20UI-007FFF?style=flat&logo=mui&logoColor=white" />
+  <img src="https://img.shields.io/badge/Auth-Firebase-FFA611?style=flat&logo=firebase&logoColor=white" />
+  <img src="https://img.shields.io/badge/Database-Firestore-FFCA28?style=flat&logo=firebase&logoColor=black" />
+  <img src="https://img.shields.io/badge/State-Redux%20Toolkit-764ABC?style=flat&logo=redux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Deployment-Netlify-00C7B7?style=flat&logo=netlify&logoColor=white" />
 </p>
 
 <h1 align="center">📝 React Firebase Blog App</h1>
