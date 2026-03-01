@@ -8,14 +8,12 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC8bQFGq4B6wDdvZdmLaFE-vwPb8C2tv3U",
-  authDomain: "react-blog-app-23841.firebaseapp.com",
-  projectId: "react-blog-app-23841",
-  storageBucket: "react-blog-app-23841.firebasestorage.app",
-  // ✅ DOĞRU BUCKET
-  // storageBucket: "react-blog-app-23841.appspot.com",
-  messagingSenderId: "686979033824",
-  appId: "1:686979033824:web:b56c203b34330988ebfe85"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID
 };
 
 // Initialize Firebase
